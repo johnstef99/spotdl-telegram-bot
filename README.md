@@ -16,7 +16,7 @@ The bot uses [spotdl](https://github.com/johnstef99/spotify-downloader) to downl
 
 # Config
 
-Just edit the telegram_bot.py file and add your **token**, then you can run ``` python telegram_bot.py ``` and try sending a message to your bot (see the available commands)
+Clone this repo somewhere on your machine and edit the telegram_bot.py file, add your **token**, and then you can run ``` python telegram_bot.py ``` (**make sure you source to you virtual environment**). Now try sending a message to your bot (see the available commands)
 
 # Commands
 
