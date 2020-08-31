@@ -1,56 +1,59 @@
-from telegram.ext import Updater, CallbackContext, CommandHandler
-from telegram import Bot, Update
-import sys
-from spotdl.command_line.__main__ import main
-import time
+import logging
+import os
 
-bot = Bot(token='ADD YOUR TOKEN HERE')
+from spotdl import Spotdl, util
+from spotdl.command_line.core import Spotdl
+from spotdl.helpers.spotify import SpotifyHelpers
+from telegram import *
+from telegram.ext import *
 
-updater = Updater(bot=bot, use_context=True)
-
-dispatcher = updater.dispatcher
+util.install_logger(logging.INFO)
+old_fact = util.logging.getLogRecordFactory()
 
 
 def song(update: Update, context: CallbackContext):
+
+    def sendSong(filename):
+        audio_file = open(filename, 'rb')
+        context.bot.send_audio(
+            chat_id=update.effective_chat.id, audio=audio_file)
+        os.remove(filename)
+
+    def sendMsg(message):
+        context.bot.send_message(
+            chat_id=update.effective_chat.id, text=message)
+
+    def record_factory(*args, **kwargs):
+        record = old_fact(*args, **kwargs)
+        if(record.levelname == "INFO"):
+            sendMsg(record.msg)
+        return record
+
+    logging.setLogRecordFactory(record_factory)
     song = update.effective_message.text[6:]
     if(len(song) == 0):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text='send the name or the spotify link of the song')
+        sendMsg('send the name or the link of the song')
         return
-    print('song: '+song)
-    sys.argv = ['', '-s', song, '--overwrite', 'force']
-    main(update, context)
+    print('/song: '+song)
+    sendMsg("Search match for " + song)
+    args = {
+        "overwrite": "force"
+    }
+    with Spotdl(args) as spotdl_handler:
+        filename = spotdl_handler.download_track(song)
+        if(filename != "None"):
+            sendSong(filename)
 
 
-def playlistToList(update: Update, context: CallbackContext):
-    playlist = update.effective_message.text[15:]
-    if(len(playlist) == 0):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text='send the link of the spotify playlist')
-        return
-    print('playlist: ' + playlist)
-    sys.argv = ['', '-p', playlist, '--overwrite', 'force']
-    main(update, context)
+def main():
+    bot = Bot(token='YOUR_TOKEN_HERE')
+    updater = Updater(bot=bot, use_context=True)
+    dispatcher = updater.dispatcher
+    song_handler = CommandHandler('song', song)
+    dispatcher.add_handler(song_handler)
+
+    updater.start_polling()
 
 
-def list_file(update: Update, context: CallbackContext):
-    list_file = update.effective_message.text[6:]
-    if(len(list_file) == 0):
-        context.bot.send_message(
-            chat_id=update.effective_chat.id, text='send the file.txt that you created from playlist2list')
-        return
-    print('listfile: '+list_file)
-    sys.argv = ['', '-l', list_file, '--overwrite', 'force']
-    main(update, context)
-
-
-song_handler = CommandHandler('song', song)
-dispatcher.add_handler(song_handler)
-
-playlist_handler = CommandHandler('playlist2list', playlistToList)
-dispatcher.add_handler(playlist_handler)
-
-list_handler = CommandHandler('list', list_file)
-dispatcher.add_handler(list_handler)
-
-updater.start_polling()
+if __name__ == "__main__":
+    main()
