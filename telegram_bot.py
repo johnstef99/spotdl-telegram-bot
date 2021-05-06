@@ -46,7 +46,7 @@ def song(update: Update, context: CallbackContext):
 
 
 def main():
-    bot = Bot(token='YOUR_TOKEN_HERE')
+    bot = Bot(token='1562654689:AAFrt9mkDNvOmz49eWGC50KPFnpWsg7m_cI')
     updater = Updater(bot=bot, use_context=True)
     dispatcher = updater.dispatcher
     song_handler = CommandHandler('song', song)
