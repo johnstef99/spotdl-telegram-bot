@@ -18,6 +18,8 @@ bot deletes the local files from the machine.
 
 # Set-up
 
+## Manually
+
 - Create a new python environment (**recomended**) and source into it
   ```sh
   python3.6 -m venv spotel_env
@@ -27,26 +29,21 @@ bot deletes the local files from the machine.
   with `pip install python-telegram-bot`
 - Install [spotdl](https://github.com/johnstef99/spotify-downloader.git) `pip install git+https://github.com/johnstef99/spotify-downloader.git`
 - Make sure you have ffmpeg install (not a python package)
+- run `BOT_TOKEN='YOUR_TOKEN' python telegram_bot.py` to get the server up and running
 
-# Config
+## Docker
 
-Clone this repo somewhere on your machine and edit the `telegram_bot.py` file,
-add your **token**, and then you can run `python telegram_bot.py` (**make
-sure you source to you virtual environment where spotdl and telegram-bot
-is installed**). Now try sending a message to your bot (see the available
-commands)
+- edit the `Dockerfile` and add your bot token
+- run `docker build -t spotel` to build the docker image
+- run `docker run spotel` to get the server up and running
 
 # Commands
 
 - **/song** _song's title/link_ (downloads a single song)
 
-# Extra Info
+### Extra Info
 
 > - The bot can also download songs from youtube link but it's better to send
 >   spotify link or the song title so you get the metadata.
 > - A good app for Android users is
 >   [Musicolet](https://play.google.com/store/apps/details?id=in.krosbits.musicolet)
-
-```
-
-```
