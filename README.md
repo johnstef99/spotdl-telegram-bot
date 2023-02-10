@@ -35,7 +35,7 @@ bot deletes the local files from the machine.
 
 - edit the `Dockerfile` and add your bot token
 - run `docker build -t spotel` to build the docker image
-- run `docker run spotel` to get the server up and running
+- run `docker run -d -e BOT_TOKEN=$BOT_TOKEN spotel` to get the server up and running
 
 # Commands
 
